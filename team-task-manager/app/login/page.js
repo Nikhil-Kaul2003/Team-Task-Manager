@@ -1,37 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+
+  const router = useRouter();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  async function handleLogin(e) {
+  const handleLogin = async (e) => {
 
     e.preventDefault();
 
     try {
 
-      const res = await fetch(
-        "http://localhost:3000/api/auth/login",
-        {
-          method: "POST",
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          body: JSON.stringify(form),
-        }
-      );
+        body: JSON.stringify(form),
+      });
 
       const data = await res.json();
 
-      if (data.token) {
+      console.log(data);
+
+      if (res.ok) {
 
         localStorage.setItem(
           "token",
@@ -45,24 +46,24 @@ export default function LoginPage() {
 
         alert("Login successful");
 
-        window.location.href =
-          "/dashboard";
+        window.location.href = "/dashboard";
 
       } else {
 
-        alert(data.error);
-
+        alert(
+          data.error || "Login failed"
+        );
       }
 
     } catch (error) {
 
       console.log(error);
 
+      alert("Something went wrong");
     }
-  }
+  };
 
   return (
-
     <div
       style={{
         minHeight: "100vh",
@@ -70,115 +71,85 @@ export default function LoginPage() {
         justifyContent: "center",
         alignItems: "center",
         background:
-          "linear-gradient(to right, #141e30, #243b55)",
-        fontFamily: "Arial",
+          "linear-gradient(to right, #0f172a, #1e3a8a)",
       }}
     >
-
-      <div
+      <form
+        onSubmit={handleLogin}
         style={{
-          width: "400px",
-          padding: "40px",
+          width: "350px",
+          padding: "30px",
           borderRadius: "20px",
-          background:
-            "rgba(255,255,255,0.1)",
+          background: "rgba(255,255,255,0.1)",
           backdropFilter: "blur(10px)",
-          boxShadow:
-            "0 8px 32px rgba(0,0,0,0.3)",
-          border:
-            "1px solid rgba(255,255,255,0.2)",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-
         <h1
           style={{
             color: "white",
             textAlign: "center",
-            marginBottom: "30px",
-            fontSize: "36px",
+            marginBottom: "25px",
           }}
         >
           Login
         </h1>
 
-        <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Enter email"
+          value={form.email}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              email: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        />
 
-          <input
-            type="email"
-            placeholder="Enter email"
-            value={form.email}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                email: e.target.value,
-              })
-            }
-            required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          />
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={form.password}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              password: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        />
 
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                password: e.target.value,
-              })
-            }
-            required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          />
-
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "15px",
-              background:
-                "linear-gradient(to right, #00c6ff, #0072ff)",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              fontSize: "18px",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            Login
-          </button>
-
-        </form>
-
-      </div>
-
+        <button
+          type="submit"
+          style={{
+            padding: "15px",
+            borderRadius: "10px",
+            border: "none",
+            background: "#0ea5e9",
+            color: "white",
+            fontSize: "18px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          Login
+        </button>
+      </form>
     </div>
   );
 }
