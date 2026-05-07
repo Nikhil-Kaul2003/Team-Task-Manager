@@ -1,66 +1,49 @@
-import { prisma } from "../../../../lib/prisma";
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
-export async function PUT(req, context) {
+// UPDATE TASK
+export async function PUT(req, { params }) {
   try {
-    const body = await req.json();
-
-    // FIX
-    const params = await context.params;
+    const { id } = params;
 
     const updatedTask = await prisma.task.update({
       where: {
-        id: Number(params.id),
+        id,
       },
       data: {
-        status: body.status,
+        status: "DONE",
       },
     });
 
-    return Response.json({
-      message: "Task updated successfully",
-      task: updatedTask,
-    });
-
+    return NextResponse.json(updatedTask);
   } catch (error) {
     console.log(error);
-
-    return Response.json(
-      {
-        error: "Internal server error",
-      },
-      {
-        status: 500,
-      }
+    return NextResponse.json(
+      { error: "Failed to update task" },
+      { status: 500 }
     );
   }
 }
 
-export async function DELETE(req, context) {
+// DELETE TASK
+export async function DELETE(req, { params }) {
   try {
-
-    // FIX
-    const params = await context.params;
+    const { id } = params;
 
     await prisma.task.delete({
       where: {
-        id: Number(params.id),
+        id,
       },
     });
 
-    return Response.json({
-      message: "Task deleted successfully",
+    return NextResponse.json({
+      message: "Task deleted",
     });
-
   } catch (error) {
     console.log(error);
-
-    return Response.json(
-      {
-        error: "Internal server error",
-      },
-      {
-        status: 500,
-      }
+    return NextResponse.json(
+      { error: "Failed to delete task" },
+      { status: 500 }
     );
   }
 }
