@@ -1,72 +1,54 @@
-import { prisma } from "../../../lib/prisma";
+import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
-export async function POST(req) {
+const prisma = new PrismaClient();
+
+export async function GET() {
   try {
-    const body = await req.json();
-
-    const {
-      title,
-      status,
-      dueDate,
-      userId,
-      projectId,
-    } = body;
-
-    if (
-      !title ||
-      !status ||
-      !dueDate ||
-      !userId ||
-      !projectId
-    ) {
-      return Response.json(
-        { error: "All fields required" },
-        { status: 400 }
-      );
-    }
-
-    const task = await prisma.task.create({
-      data: {
-        title,
-        status,
-        dueDate: new Date(dueDate),
-        userId,
-        projectId:1,
+    const tasks = await prisma.task.findMany({
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    return Response.json(
-      {
-        message: "Task created successfully",
-        task,
-      },
-      { status: 201 }
-    );
+    return NextResponse.json(tasks);
   } catch (error) {
-    console.log("TASK CREATE ERROR:", error);
+    console.log(error);
 
-    return Response.json(
-      { error: "Internal server error" },
+    return NextResponse.json(
+      { error: "Failed to fetch tasks" },
       { status: 500 }
     );
   }
 }
 
-export async function GET() {
+export async function POST(req) {
   try {
-    const tasks = await prisma.task.findMany({
-      include: {
-        user: true,
-        project: true,
+    const body = await req.json();
+
+    const { title, dueDate } = body;
+
+    if (!title || !dueDate) {
+      return NextResponse.json(
+        { error: "Missing fields" },
+        { status: 400 }
+      );
+    }
+
+    const newTask = await prisma.task.create({
+      data: {
+        title,
+        dueDate: new Date(dueDate),
+        status: "PENDING",
       },
     });
 
-    return Response.json(tasks);
+    return NextResponse.json(newTask);
   } catch (error) {
-    console.log("GET TASK ERROR:", error);
+    console.log(error);
 
-    return Response.json(
-      { error: "Internal server error" },
+    return NextResponse.json(
+      { error: "Task creation failed" },
       { status: 500 }
     );
   }
