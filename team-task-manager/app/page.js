@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+import { redirect } from "next/navigation";
+
+export default function Home() {
+  redirect("/signup");
+}
+
 export default function Home() {
   const [data, setData] = useState(null);
 
