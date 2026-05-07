@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-// UPDATE TASK
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
-    const { id } = params;
+    const id = context.params.id;
 
     const updatedTask = await prisma.task.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         status: "COMPLETED",
       },
@@ -18,31 +15,30 @@ export async function PUT(req, { params }) {
     return NextResponse.json(updatedTask);
   } catch (error) {
     console.log(error);
+
     return NextResponse.json(
-      { error: "Failed to update task" },
+      { message: "Failed to update" },
       { status: 500 }
     );
   }
 }
 
-// DELETE TASK
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
-    const { id } = params;
+    const id = context.params.id;
 
     await prisma.task.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     return NextResponse.json({
-      message: "Task deleted",
+      message: "Deleted successfully",
     });
   } catch (error) {
     console.log(error);
+
     return NextResponse.json(
-      { error: "Failed to delete task" },
+      { message: "Failed to delete" },
       { status: 500 }
     );
   }
