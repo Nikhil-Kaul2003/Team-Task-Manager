@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+
+  const router = useRouter();
 
   const [form, setForm] = useState({
     name: "",
@@ -11,25 +14,18 @@ export default function SignupPage() {
     role: "MEMBER",
   });
 
-  async function handleSignup(e) {
-
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
 
-      const res = await fetch(
-        "http://localhost:3000/api/auth/signup",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify(form),
-        }
-      );
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
       const data = await res.json();
 
@@ -37,24 +33,22 @@ export default function SignupPage() {
 
         alert("Signup successful");
 
-        window.location.href =
-          "/login";
+        router.push("/login");
 
       } else {
 
-        alert(data.error);
-
+        alert(data.error || "Signup failed");
       }
 
     } catch (error) {
 
       console.log(error);
 
+      alert("Something went wrong");
     }
-  }
+  };
 
   return (
-
     <div
       style={{
         minHeight: "100vh",
@@ -62,174 +56,129 @@ export default function SignupPage() {
         justifyContent: "center",
         alignItems: "center",
         background:
-          "linear-gradient(to right, #141e30, #243b55)",
-        fontFamily: "Arial",
+          "linear-gradient(to right, #0f172a, #1e3a8a)",
       }}
     >
-
-      <div
+      <form
+        onSubmit={handleSignup}
         style={{
-          width: "400px",
-          padding: "40px",
+          width: "350px",
+          padding: "30px",
           borderRadius: "20px",
-          background:
-            "rgba(255,255,255,0.1)",
+          background: "rgba(255,255,255,0.1)",
           backdropFilter: "blur(10px)",
-          boxShadow:
-            "0 8px 32px rgba(0,0,0,0.3)",
-          border:
-            "1px solid rgba(255,255,255,0.2)",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-
         <h1
           style={{
             color: "white",
             textAlign: "center",
-            marginBottom: "30px",
-            fontSize: "36px",
+            marginBottom: "25px",
           }}
         >
           Signup
         </h1>
 
-        <form onSubmit={handleSignup}>
+        <input
+          type="text"
+          placeholder="Enter Name"
+          value={form.name}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              name: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        />
 
-          <input
-            type="text"
-            placeholder="Enter name"
-            value={form.name}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                name: e.target.value,
-              })
-            }
-            required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          />
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={form.email}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              email: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        />
 
-          <input
-            type="email"
-            placeholder="Enter email"
-            value={form.email}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                email: e.target.value,
-              })
-            }
-            required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          />
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={form.password}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              password: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        />
 
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                password: e.target.value,
-              })
-            }
-            required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          />
+        <select
+          value={form.role}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              role: e.target.value,
+            })
+          }
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+            border: "none",
+            outline: "none",
+          }}
+        >
+          <option value="MEMBER">
+            Member
+          </option>
 
-          <select
-            value={form.role}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                role: e.target.value,
-              })
-            }
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              borderRadius: "10px",
-              border: "none",
-              outline: "none",
-              background: "white",
-              fontSize: "16px",
-              color: "black",
-              position: "relative",
-              zIndex: "10",
-              pointerEvents: "auto",
-            }}
-          >
-            <option value="MEMBER">
-              Member
-            </option>
+          <option value="ADMIN">
+            Admin
+          </option>
+        </select>
 
-            <option value="ADMIN">
-              Admin
-            </option>
-          </select>
-
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "15px",
-              background:
-                "linear-gradient(to right, #00c6ff, #0072ff)",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              fontSize: "18px",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            Signup
-          </button>
-
-        </form>
-
-      </div>
-
+        <button
+          type="submit"
+          style={{
+            padding: "15px",
+            borderRadius: "10px",
+            border: "none",
+            background: "#0ea5e9",
+            color: "white",
+            fontSize: "18px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          Signup
+        </button>
+      </form>
     </div>
   );
 }
