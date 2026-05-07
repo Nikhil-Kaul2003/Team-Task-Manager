@@ -11,7 +11,7 @@ export async function PUT(req, { params }) {
         id,
       },
       data: {
-        status: "DONE",
+        status: "COMPLETED",
       },
     });
 
