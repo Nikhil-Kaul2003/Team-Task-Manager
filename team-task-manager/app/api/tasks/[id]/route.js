@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 
 // UPDATE TASK
 export async function PUT(req, { params }) {
